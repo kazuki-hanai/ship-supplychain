@@ -15,6 +15,7 @@ const myChaincodeName = 'ship-supplychain_v' + process.argv[2];
 
 async function bid(ccp, wallet, user, orgMSP, shipID, price) {
 	try {
+		console.error('** 入札 **');
 
 		const gateway = new Gateway();
 		//connect using Discovery enabled
@@ -25,9 +26,9 @@ async function bid(ccp, wallet, user, orgMSP, shipID, price) {
 		const network = await gateway.getNetwork(myChannel);
 		const contract = network.getContract(myChaincodeName);
 
-		console.log('\n--> Evaluate Transaction: get your client ID');
+		// console.log('\n--> Evaluate Transaction: get your client ID');
 		let bidder = await contract.evaluateTransaction('GetSubmittingClientIdentity');
-		console.log('*** Result:  Bidder ID is ' + bidder.toString());
+		// console.log('*** Result:  Bidder ID is ' + bidder.toString());
 
 		let bidData = {objectType: 'bid', price: parseInt(price), org: orgMSP, bidder: bidder.toString()};
 
@@ -40,14 +41,16 @@ async function bid(ccp, wallet, user, orgMSP, shipID, price) {
 
 		let bidID = statefulTxn.getTransactionId();
 
-		console.log('\n--> Submit Transaction: Create the bid that is stored in your organization\'s private data collection');
+		// console.log('\n--> Submit Transaction: Create the bid that is stored in your organization\'s private data collection');
 		await statefulTxn.submit(shipID);
-		console.log('*** Result: committed');
-		console.log('*** Result ***SAVE THIS VALUE*** BidID: ' + bidID.toString());
+		// console.log('*** Result: committed');
+		// console.log('*** Result ***SAVE THIS VALUE*** BidID: ' + bidID.toString());
 
-		console.log('\n--> Evaluate Transaction: read the bid that was just created');
+		// console.log('\n--> Evaluate Transaction: read the bid that was just created');
 		let result = await contract.evaluateTransaction('QueryBid', shipID, bidID);
-		console.log('*** Result:  Bid: ' + prettyJSONString(result.toString()));
+		// console.log('*** Result:  Bid: ' + prettyJSONString(result.toString()));
+		result = JSON.parse(result.toString());
+                console.error('入札者', )
 
 		gateway.disconnect();
 	} catch (error) {

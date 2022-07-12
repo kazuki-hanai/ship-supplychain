@@ -20,6 +20,7 @@ const myChaincodeName = 'ship-supplychain_v' + process.argv[2];
 
 async function createShip(ccp, wallet, user, auctionID, itemName, itemDest, itemWeight, itemDays) {
 	try {
+		console.error('** 輸送依頼の作成 **');
 		const gateway = new Gateway();
 
 		//connect using Discovery enabled
@@ -34,15 +35,21 @@ async function createShip(ccp, wallet, user, auctionID, itemName, itemDest, item
 
 		let statefulTxn = contract.createTransaction('CreateShipping');
 
-		console.log('\n--> Submit Transaction: Propose a new auction');
+		// console.log('\n--> Submit Transaction: Propose a new auction');
 		await statefulTxn.submit(auctionID, itemName, itemDest, itemWeight, itemDays);
-		console.log('*** Result: committed');
+		// console.log('*** Result: committed');
 
-		console.log(
-			'\n--> Evaluate Transaction: query the auction that was just created'
-		);
+		// console.log(
+		// 	'\n--> Evaluate Transaction: query the auction that was just created'
+		// );
 		let result = await contract.evaluateTransaction('QueryShipping', auctionID);
-		console.log('*** Result: Ship: ' + prettyJSONString(result.toString()));
+		// console.log('*** Result: Ship: ' + prettyJSONString(result.toString()));
+		result = JSON.parse(result.toString());
+		console.error('依頼商品: ', result.item.item);
+		console.error('輸送先: ', result.item.dest);
+		console.error('重さ: ', result.item.org);
+		console.error('輸送日数: ', result.item.days);
+		console.error('オークションステータス:', result.status);
 
 		gateway.disconnect();
 	} catch (error) {
@@ -62,7 +69,7 @@ async function main() {
       process.argv[8] === undefined ||
       process.argv[9] === undefined
 		) {
-			console.log('Usage: node createShip.js contractVersion org userID auctionID itemName itemDest itemWeight');
+			console.log('Usage: node createShip.js contractVersion org userID auctionID itemName itemDest itemWeight itemDays');
 			process.exit(1);
 		}
 
@@ -85,7 +92,7 @@ async function main() {
 			const wallet = await buildWallet(Wallets, walletPath);
 			await createShip(ccp, wallet, user, auctionID, itemName, itemDest, itemWeight, itemDays);
 		} else {
-			console.log('Usage: node createShip.js org userID auctionID item');
+			console.log('Usage: node createShip.js contractVersion org userID auctionID itemName itemDest itemWeight itemDays');
 			console.log('Org must be Org1 or Org2');
 		}
 	} catch (error) {
