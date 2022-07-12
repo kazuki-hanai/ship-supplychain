@@ -52,6 +52,24 @@ async function addBid(ccp,wallet,user,shipID,bidID) {
 		console.log('\n--> Evaluate Transaction: query the ship to see that our bid was added');
 		let result = await contract.evaluateTransaction('QueryShipping',shipID);
 		console.log('*** Result: Ship: ' + prettyJSONString(result.toString()));
+		result = JSON.parse(result.toString());
+		console.error('依頼商品: ', result.item.item);
+		console.error('輸送先: ', result.item.dest);
+		console.error('重さ: ', result.item.org);
+		console.error('輸送日数: ', result.item.days);
+                console.error('入札(未公開):')
+                for (const [key, value] of Object.entries(result.privateBids)) {
+                    console.error('    ', value.hash);
+                }
+                console.error('入札(公開): ');
+                for (const [key, value] of Object.entries(result.revealedBids)) {
+                    console.error('    ', key, ': ');
+                    console.error('        入札価格:', value.price);
+                    console.error('        入札者:', value.bidder.slice(9, 16));
+                }
+		console.error('落札者:', result.winner.slice(9, 16));
+		console.error('落札価格:', result.price);
+		console.error('オークションステータス:', result.status);
 
 		gateway.disconnect();
 	} catch (error) {

@@ -12,7 +12,6 @@ const {
 	buildCCPOrg1,
 	buildCCPOrg2,
 	buildWallet,
-	prettyJSONString,
 } = require('../../test-application/javascript/AppUtil.js');
 
 const myChannel = 'mychannel';
@@ -49,6 +48,18 @@ async function createShip(ccp, wallet, user, auctionID, itemName, itemDest, item
 		console.error('輸送先: ', result.item.dest);
 		console.error('重さ: ', result.item.org);
 		console.error('輸送日数: ', result.item.days);
+                console.error('入札(未公開):')
+                for (const [key, value] of Object.entries(result.privateBids)) {
+                    console.error('    ', value.hash);
+                }
+                console.error('入札(公開): ');
+                for (const [key, value] of Object.entries(result.revealedBids)) {
+                    console.error('    ', key, ': ');
+                    console.error('        入札価格:', value.price);
+                    console.error('        入札者:', value.bidder.slice(9, 16));
+                }
+		console.error('落札者:', result.winner.slice(9, 16));
+		console.error('落札価格:', result.price);
 		console.error('オークションステータス:', result.status);
 
 		gateway.disconnect();

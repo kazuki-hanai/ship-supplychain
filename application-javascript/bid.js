@@ -15,7 +15,7 @@ const myChaincodeName = 'ship-supplychain_v' + process.argv[2];
 
 async function bid(ccp, wallet, user, orgMSP, shipID, price) {
 	try {
-		console.error('** 入札 **');
+		// console.error('** 入札 **');
 
 		const gateway = new Gateway();
 		//connect using Discovery enabled
@@ -50,7 +50,9 @@ async function bid(ccp, wallet, user, orgMSP, shipID, price) {
 		let result = await contract.evaluateTransaction('QueryBid', shipID, bidID);
 		// console.log('*** Result:  Bid: ' + prettyJSONString(result.toString()));
 		result = JSON.parse(result.toString());
-                console.error('入札者', )
+                // console.error('入札者: ', result.bidder.slice(9, 16));
+                // console.error('価格: ', result.price);
+                console.error(bidID);
 
 		gateway.disconnect();
 	} catch (error) {

@@ -35,7 +35,7 @@ async function submitBid(ccp,wallet,user,shipID,bidID) {
 		const network = await gateway.getNetwork(myChannel);
 		const contract = network.getContract(myChaincodeName);
 
-		console.log('\n--> Evaluate Transaction: query the ship you want to join');
+		// console.log('\n--> Evaluate Transaction: query the ship you want to join');
 		let shipString = await contract.evaluateTransaction('QueryShipping',shipID);
 		let shipJSON = JSON.parse(shipString);
 
@@ -47,12 +47,14 @@ async function submitBid(ccp,wallet,user,shipID,bidID) {
 			statefulTxn.setEndorsingOrganizations(shipJSON.organizations[0]);
 		}
 
-		console.log('\n--> Submit Transaction: add bid to the ship');
+		// console.log('\n--> Submit Transaction: add bid to the ship');
 		await statefulTxn.submit(shipID,bidID);
 
-		console.log('\n--> Evaluate Transaction: query the ship to see that our bid was added');
-		let result = await contract.evaluateTransaction('QueryShipping',shipID);
-		console.log('*** Result: Shipping: ' + prettyJSONString(result.toString()));
+		// console.log('\n--> Evaluate Transaction: query the ship to see that our bid was added');
+		let result = await contract.evaluateTransaction('QueryBid', shipID, bidID);
+		result = JSON.parse(result.toString());
+                console.error('入札者: ', result.bidder.slice(9, 16));
+                console.error('価格: ', result.price);
 
 		gateway.disconnect();
 	} catch (error) {
