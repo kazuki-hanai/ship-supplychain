@@ -11,7 +11,7 @@ const path = require('path');
 const { buildCCPOrg1, buildCCPOrg2, buildWallet, prettyJSONString} = require('../../test-application/javascript/AppUtil.js');
 
 const myChannel = 'mychannel';
-const myChaincodeName = 'ship-supplychain_v2';
+const myChaincodeName = 'ship-supplychain_v' + process.argv[2];
 
 async function addBid(ccp,wallet,user,shipID,bidID) {
 	try {
@@ -64,15 +64,15 @@ async function main() {
 	try {
 
 		if (process.argv[2] === undefined || process.argv[3] === undefined ||
-            process.argv[4] === undefined || process.argv[5] === undefined) {
+            process.argv[4] === undefined || process.argv[5] === undefined || process.argv[6] === undefined) {
 			console.log('Usage: node revealBid.js org userID shipID bidID');
 			process.exit(1);
 		}
 
-		const org = process.argv[2];
-		const user = process.argv[3];
-		const shipID = process.argv[4];
-		const bidID = process.argv[5];
+		const org = process.argv[3];
+		const user = process.argv[4];
+		const shipID = process.argv[5];
+		const bidID = process.argv[6];
 
 		if (org === 'Org1' || org === 'org1') {
 			const ccp = buildCCPOrg1();

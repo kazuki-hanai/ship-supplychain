@@ -16,7 +16,7 @@ const {
 } = require('../../test-application/javascript/AppUtil.js');
 
 const myChannel = 'mychannel';
-const myChaincodeName = 'ship-supplychain_v2';
+const myChaincodeName = 'ship-supplychain_v' + process.argv[2];
 
 async function createShip(ccp, wallet, user, auctionID, itemName, itemDest, itemWeight, itemDays) {
 	try {
@@ -59,19 +59,20 @@ async function main() {
       process.argv[5] === undefined ||
       process.argv[6] === undefined ||
       process.argv[7] === undefined ||
-      process.argv[8] === undefined
+      process.argv[8] === undefined ||
+      process.argv[9] === undefined
 		) {
-			console.log('Usage: node createShip.js org userID auctionID itemName itemDest itemWeight');
+			console.log('Usage: node createShip.js contractVersion org userID auctionID itemName itemDest itemWeight');
 			process.exit(1);
 		}
 
-		const org = process.argv[2];
-		const user = process.argv[3];
-		const auctionID = process.argv[4];
-		const itemName = process.argv[5];
-		const itemDest = process.argv[6];
-		const itemWeight = process.argv[7];
-		const itemDays = process.argv[8];
+		const org = process.argv[3];
+		const user = process.argv[4];
+		const auctionID = process.argv[5];
+		const itemName = process.argv[6];
+		const itemDest = process.argv[7];
+		const itemWeight = process.argv[8];
+		const itemDays = process.argv[9];
 
 		if (org === 'Org1' || org === 'org1') {
 			const ccp = buildCCPOrg1();
