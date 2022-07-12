@@ -20,7 +20,7 @@ type SmartContract struct {
 // Shipping data
 type Shipping struct {
 	Type         string             `json:"objectType"`
-	ItemSold     string             `json:"item"`
+	ItemSold     Item               `json:"item"`
 	Seller       string             `json:"seller"`
 	Orgs         []string           `json:"organizations"`
 	PrivateBids  map[string]BidHash `json:"privateBids"`
@@ -28,6 +28,13 @@ type Shipping struct {
 	Winner       string             `json:"winner"`
 	Price        int                `json:"price"`
 	Status       string             `json:"status"`
+}
+
+type Item struct {
+	Name   string `json:"item"`
+	Dest   string `json:"dest"`
+	Weight int    `json:"org"`
+	Days   int    `json:"days"`
 }
 
 // FullBid is the structure of a revealed bid
@@ -48,7 +55,7 @@ const bidKeyType = "bid"
 
 // CreateShipping creates on shipping on the public channel. The identity that
 // submits the transacion becomes the seller of the shipping
-func (s *SmartContract) CreateShipping(ctx contractapi.TransactionContextInterface, shippingID string, itemsold string) error {
+func (s *SmartContract) CreateShipping(ctx contractapi.TransactionContextInterface, shippingID string, itemName string, itemDest string, itemWeight int, itemDays int) error {
 
 	// get ID of submitting client
 	clientID, err := s.GetSubmittingClientIdentity(ctx)
@@ -67,8 +74,13 @@ func (s *SmartContract) CreateShipping(ctx contractapi.TransactionContextInterfa
 	revealedBids := make(map[string]FullBid)
 
 	shipping := Shipping{
-		Type:         "shipping",
-		ItemSold:     itemsold,
+		Type: "shipping",
+		ItemSold: Item{
+			Name:   itemName,
+			Dest:   itemDest,
+			Weight: itemWeight,
+			Days:   itemDays,
+		},
 		Price:        0,
 		Seller:       clientID,
 		Orgs:         []string{clientOrgID},

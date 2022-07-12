@@ -11,9 +11,9 @@ const path = require('path');
 const { buildCCPOrg1, buildCCPOrg2, buildWallet, prettyJSONString} = require('../../test-application/javascript/AppUtil.js');
 
 const myChannel = 'mychannel';
-const myChaincodeName = 'auction';
+const myChaincodeName = 'ship-supplychain_v2';
 
-async function closeAuction(ccp,wallet,user,auctionID) {
+async function closeShip(ccp,wallet,user,shipID) {
 	try {
 
 		const gateway = new Gateway();
@@ -25,25 +25,25 @@ async function closeAuction(ccp,wallet,user,auctionID) {
 		const network = await gateway.getNetwork(myChannel);
 		const contract = network.getContract(myChaincodeName);
 
-		// Query the auction to get the list of endorsing orgs.
-		let auctionString = await contract.evaluateTransaction('QueryAuction',auctionID);
-		let auctionJSON = JSON.parse(auctionString);
+		// Query the ship to get the list of endorsing orgs.
+		let shipString = await contract.evaluateTransaction('QueryShipping',shipID);
+		let shipJSON = JSON.parse(shipString);
 
-		let statefulTxn = contract.createTransaction('CloseAuction');
+		let statefulTxn = contract.createTransaction('CloseShipping');
 
-		if (auctionJSON.organizations.length === 2) {
-			statefulTxn.setEndorsingOrganizations(auctionJSON.organizations[0],auctionJSON.organizations[1]);
+		if (shipJSON.organizations.length === 2) {
+			statefulTxn.setEndorsingOrganizations(shipJSON.organizations[0],shipJSON.organizations[1]);
 		} else {
-			statefulTxn.setEndorsingOrganizations(auctionJSON.organizations[0]);
+			statefulTxn.setEndorsingOrganizations(shipJSON.organizations[0]);
 		}
 
-		console.log('\n--> Submit Transaction: close auction');
-		await statefulTxn.submit(auctionID);
+		console.log('\n--> Submit Transaction: close ship');
+		await statefulTxn.submit(shipID);
 		console.log('*** Result: committed');
 
-		console.log('\n--> Evaluate Transaction: query the updated auction');
-		let result = await contract.evaluateTransaction('QueryAuction',auctionID);
-		console.log('*** Result: Auction: ' + prettyJSONString(result.toString()));
+		console.log('\n--> Evaluate Transaction: query the updated ship');
+		let result = await contract.evaluateTransaction('QueryShipping',shipID);
+		console.log('*** Result: Ship: ' + prettyJSONString(result.toString()));
 
 		gateway.disconnect();
 	} catch (error) {
@@ -57,27 +57,27 @@ async function main() {
 
 		if (process.argv[2] === undefined || process.argv[3] === undefined ||
             process.argv[4] === undefined) {
-			console.log('Usage: node closeAuction.js org userID auctionID');
+			console.log('Usage: node closeShip.js org userID shipID');
 			process.exit(1);
 		}
 
 		const org = process.argv[2];
 		const user = process.argv[3];
-		const auctionID = process.argv[4];
+		const shipID = process.argv[4];
 
 		if (org === 'Org1' || org === 'org1') {
 			const ccp = buildCCPOrg1();
 			const walletPath = path.join(__dirname, 'wallet/org1');
 			const wallet = await buildWallet(Wallets, walletPath);
-			await closeAuction(ccp,wallet,user,auctionID);
+			await closeShip(ccp,wallet,user,shipID);
 		}
 		else if (org === 'Org2' || org === 'org2') {
 			const ccp = buildCCPOrg2();
 			const walletPath = path.join(__dirname, 'wallet/org2');
 			const wallet = await buildWallet(Wallets, walletPath);
-			await closeAuction(ccp,wallet,user,auctionID);
+			await closeShip(ccp,wallet,user,shipID);
 		}  else {
-			console.log('Usage: node closeAuction.js org userID auctionID ');
+			console.log('Usage: node closeShip.js org userID shipID ');
 			console.log('Org must be Org1 or Org2');
 		}
 	} catch (error) {
