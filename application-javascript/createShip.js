@@ -19,7 +19,6 @@ const myChaincodeName = 'ship-supplychain_v' + process.argv[2];
 
 async function createShip(ccp, wallet, user, auctionID, itemName, itemDest, itemWeight, itemDays) {
 	try {
-		console.error('** 輸送依頼の作成 **');
 		const gateway = new Gateway();
 
 		//connect using Discovery enabled
