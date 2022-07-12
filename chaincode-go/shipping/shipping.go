@@ -81,7 +81,7 @@ func (s *SmartContract) CreateShipping(ctx contractapi.TransactionContextInterfa
 			Weight: itemWeight,
 			Days:   itemDays,
 		},
-		Price:        0,
+		Price:        100000000,
 		Seller:       clientID,
 		Orgs:         []string{clientOrgID},
 		PrivateBids:  bidders,
@@ -442,7 +442,7 @@ func (s *SmartContract) EndShipping(ctx contractapi.TransactionContextInterface,
 
 	// determine the highest bid
 	for _, bid := range revealedBidMap {
-		if bid.Price > shipping.Price {
+		if bid.Price < shipping.Price {
 			shipping.Winner = bid.Bidder
 			shipping.Price = bid.Price
 		}

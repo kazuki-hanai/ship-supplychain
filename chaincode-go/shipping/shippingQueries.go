@@ -115,7 +115,7 @@ func checkForHigherBid(ctx contractapi.TransactionContextInterface, shippingPric
 					return err
 				}
 
-				if bid.Price > shippingPrice {
+				if bid.Price < shippingPrice {
 					error = fmt.Errorf("Cannot close shipping, bidder has a higher price: %v", err)
 				}
 
