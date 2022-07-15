@@ -2,16 +2,23 @@
 
 ブラインドオークションとブロックチェーンの仕組みを利用して物流のシステムを最適化します．ブラインドオークションとは，オークションが終わるまで，入札価格が他者に見えないようなオークションです．配送元は，配送する商品の名前や価格，配送日数を入力します．そして，輸送会社がそれぞれ，価格を入札します．オークションが終わった時に最も安い値段を付けた会社がその商品の配送権を得ます．このシステムを利用することで，配送元はより安い価格で商品の輸送を行うことができ，輸送会社は幅広い商品輸送の依頼を受けることができるようになります．これらのロジックはすべてブロックチェーン上に実装されているのでこのシステムを利用することで他社の信頼にかかわらず，サプライチェーンのなかでも，流通に関わる部分の最適化を行うことができます．
 
-## コードをデプロイ
+## Create the network and channel with CA
 
 ```
-./network.sh deployCC -ccn ship-supplychain_v1 -ccp ../ship-supplychain/chaincode-go  -ccl go -ccep "OR('Org1MSP.peer','Org2MSP.peer')"
+cd ./test-network
+./network.sh up createChannel -ca
+```
+
+## Deploy the chaincode
+
+```
+./network.sh deployCC -ccn ship-supplychain_v1 -ccp ../auction-simple/chaincode-go -ccl go -ccep "OR('Org1MSP.peer','Org2MSP.peer')"
 ```
 
 ## アプリケーションのインストール
 
 ```
-cd application-javascript
+cd ../auction-simple/application-javascript
 npm install
 ```
 
